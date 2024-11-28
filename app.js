@@ -1,7 +1,7 @@
 const request = require('request');
 const cheerio = require("cheerio")
 const express = require("express");
-const sendEmail = require("./sendEmail");
+const sendEmail = require("./email");
 const fs = require("fs")
 const app = express();
 const PORT = process.env.PORT || 4562
@@ -28,9 +28,8 @@ function readHtml(HTML) {
   const linkText = $(".list-group-item a");
   let allResulDeclar = li.length;
 
-
   try {
-    fs.readFile("./result.txt", "utf-8", (err, data) => {
+    fs.readFile("./result.txt", "utf-8",  (err, data) => {
       if (err) {
         console.log(err)
       }
@@ -47,7 +46,7 @@ function readHtml(HTML) {
           const text = ($(linkText[i]).text());
           fs.writeFile("./result.txt", String(allResulDeclar), (err, data) => { });
 
-           sendEmail(text, resultPDf, allResulDeclar, data, resultlenth);
+            sendEmail(text, resultPDf, allResulDeclar, data, resultlenth);
         }
       }
 
