@@ -36,7 +36,7 @@ function checkTime() {
     sendEmail(text, resultPDf, text);
   }
 }
-setInterval(checkTime, 60 * 1000);
+setInterval(checkTime, 3600000);
 checkTime();
 
 function getData() {
