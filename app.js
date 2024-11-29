@@ -4,7 +4,8 @@ const express = require("express");
 const sendEmail = require("./email");
 const fs = require("fs")
 const app = express();
-const PORT = process.env.PORT || 4562
+const PORT = process.env.PORT || 4562;
+const cron = require("node-cron")
 require("dotenv").config()
 
 app.use(express.json());
@@ -13,9 +14,30 @@ app.set("view engine", "ejs")
 
 
 app.get("/", (req, res) => {
-  getData()
+
   res.render("index")
 })
+
+function checkTime() {
+  const now = new Date();
+  const currentHour = now.getHours();
+
+  if (currentHour >= 12 && currentHour < 18) {
+    const resultPDf = "#"
+    const text = `Server Start ${currentHour}`
+    sendEmail(text, resultPDf, text);
+
+    cron.schedule('* * * * * ', () => {
+      getData()
+    });
+  } else {
+    const resultPDf = "#"
+    const text = `Server Stope ${now.getHours()}`
+    sendEmail(text, resultPDf, text);
+  }
+}
+setInterval(checkTime, 60 * 1000);
+checkTime();
 
 function getData() {
   request(process.env.LINK, function (error, response, body) {
@@ -23,37 +45,39 @@ function getData() {
   });
 }
 function readHtml(HTML) {
-  const $ = cheerio.load(HTML);
-  const li = ($(".list-group-item"));
-  const linkText = $(".list-group-item a");
-  let allResulDeclar = li.length;
-
   try {
-    fs.readFile("./result.txt", "utf-8",  (err, data) => {
-      if (err) {
-        console.log(err)
-      }
-      if (allResulDeclar === Number(data)) {
-        let resultlenth = allResulDeclar - Number(data);
+    const $ = cheerio.load(HTML);
+    const li = ($(".list-group-item"));
+    const linkText = $(".list-group-item a");
+    let allResulDeclar = li.length;
 
-        const resultPDf = process.env.PDFLink + ($(linkText[0]).attr("href"));
-        const text = ($(linkText[0]).text());
-         sendEmail(text, resultPDf, allResulDeclar, data, resultlenth);
-      } else {
-        let resultlenth = allResulDeclar - Number(data);
-        for (let i = 0; i < resultlenth; i++) {
-          const resultPDf = process.env.PDFLink + ($(linkText[i]).attr("href"));
-          const text = ($(linkText[i]).text());
-          fs.writeFile("./result.txt", String(allResulDeclar), (err, data) => { });
-
-            sendEmail(text, resultPDf, allResulDeclar, data, resultlenth);
+    try {
+      fs.readFile("./result.txt", "utf-8", (err, data) => {
+        if (err) {
+          console.log(err)
         }
-      }
+        if (allResulDeclar === Number(data)) {
+        } else {
+          let resultlenth = allResulDeclar - Number(data);
+          for (let i = 0; i < resultlenth; i++) {
+            const resultPDf = process.env.PDFLink + ($(linkText[i]).attr("href"));
+            const text = ($(linkText[i]).text());
+            fs.writeFile("./result.txt", String(allResulDeclar), (err, data) => { });
 
-    })
-  } catch (error) {
+            sendEmail(text, resultPDf);
+          }
+        }
 
-    console.log("error")
+      })
+    } catch (error) {
+      const resultPDf = "#"
+      let text = `ERROR ${now.getHours()}`
+      sendEmail(error, resultPDf, text);
+    }
+  } catch (e) {
+    const resultPDf = "#"
+    const text = `ERROR`
+    sendEmail(e, resultPDf, text);
   }
 }
 app.listen(PORT, () => { console.log("server started") })

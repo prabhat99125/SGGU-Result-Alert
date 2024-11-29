@@ -2,7 +2,7 @@ const nodemailer = require("nodemailer");
 const path = require("path");
 require("dotenv").config()
 
-function sendEmail(text, resultPDf, allResulDeclar, data, resultlenth) {
+function sendEmail(text, resultPDf, h1 = "Pepar Decaliretion") {
     const auth = nodemailer.createTransport({
         service: "gmail",
         secure: true,
@@ -15,7 +15,7 @@ function sendEmail(text, resultPDf, allResulDeclar, data, resultlenth) {
     const receiver = {
         from: process.env.author,
         to: process.env.client,
-        subject: `Result :- ${allResulDeclar} - ${data} = ${resultlenth}`,
+        subject: `${text.replace(/N.*?- /, "").trim()}`,
         // text: "Node js to send file",
         // attachments: [
         //     {
@@ -24,8 +24,8 @@ function sendEmail(text, resultPDf, allResulDeclar, data, resultlenth) {
         //     }
         // ],
         html: `
-        <h1 style="text-align: center; color: #007BFF;">Pepar Decaliretion</h1>
-    <p style="margin-left: 5px;">${text}</p>
+        <h1 style="text-align: center; color: #007BFF;">${h1}</h1>
+    <h3 style="margin-left: 5px;">${text}</h3>
     <div class="boxs" style="width: 100%;">
         <a href="${resultPDf}">
             <button class="btn"
@@ -36,13 +36,13 @@ function sendEmail(text, resultPDf, allResulDeclar, data, resultlenth) {
     </div>
     `
     };
-    auth.sendMail(receiver,  (error, emailResponse) => {
+    auth.sendMail(receiver, (error, emailResponse) => {
         if (error) {
             console.log(error)
         } else {
             // console.log("success!");
-            return  "success!"
-            
+            return "success!"
+
         }
     });
 }
