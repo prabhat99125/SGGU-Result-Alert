@@ -40,7 +40,6 @@ function readHtml(HTML) {
           console.log(err)
         }
         if (allResulDeclar === Number(data)) {
-          console.log("no chenging")
         } else {
           let resultlenth = allResulDeclar - Number(data);
           for (let i = 0; i < resultlenth; i++) {
