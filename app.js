@@ -18,26 +18,9 @@ app.get("/", (req, res) => {
   res.render("index")
 })
 
-function checkTime() {
-  const now = new Date();
-  const currentHour = now.getHours();
-
-  if (currentHour >= 12 && currentHour < 18) {
-    const resultPDf = "#"
-    const text = `Server Start ${currentHour}`
-    sendEmail(text, resultPDf, text);
-
-    cron.schedule('* * * * * ', () => {
-      getData()
-    });
-  } else {
-    const resultPDf = "#"
-    const text = `Server Stope ${now.getHours()}`
-    sendEmail(text, resultPDf, text);
-  }
-}
-setInterval(checkTime, 3600000);
-checkTime();
+setInterval(() => {
+  getData()
+}, 10000);
 
 function getData() {
   request(process.env.LINK, function (error, response, body) {
@@ -57,6 +40,7 @@ function readHtml(HTML) {
           console.log(err)
         }
         if (allResulDeclar === Number(data)) {
+          console.log("no chenging")
         } else {
           let resultlenth = allResulDeclar - Number(data);
           for (let i = 0; i < resultlenth; i++) {

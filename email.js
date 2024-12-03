@@ -40,7 +40,7 @@ function sendEmail(text, resultPDf, h1 = "Pepar Decaliretion") {
         if (error) {
             console.log(error)
         } else {
-            // console.log("success!");
+            console.log("success!");
             return "success!"
 
         }
