@@ -15,7 +15,7 @@ function sendEmail(text, resultPDf, h1 = "Pepar Decaliretion") {
     const receiver = {
         from: process.env.author,
         to: process.env.client,
-        subject: `${text.replace(/N.*?- /, "").trim()}`,
+        subject: `${text}`,
         // text: "Node js to send file",
         // attachments: [
         //     {
